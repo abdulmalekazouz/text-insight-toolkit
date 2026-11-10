@@ -29,6 +29,9 @@ pip install -e ".[dev]"
   sentences, in their original order.
 - **Keyword extraction.** Ranks terms by their peak TF-IDF weight across
   the document's sentences and returns the top-N as keywords.
+- **Sentiment analysis.** Lexicon-based polarity scoring with a windowed
+  negation rule (e.g. "not good" counts as negative), fully transparent
+  about which words drove the result.
 
 ## Project layout
 
@@ -37,7 +40,8 @@ src/insighttext/
     preprocessing.py   Sentence/word tokenization and stopword filtering
     summarizer.py       TF-IDF extractive summarization
     keywords.py          TF-IDF keyword extraction
-    cli.py               argparse-based CLI
+    sentiment.py          Lexicon-based sentiment analysis
+    cli.py                 argparse-based CLI
 tests/                  pytest suite
 ```
 
@@ -49,17 +53,20 @@ tests/                  pytest suite
 insighttext summarize --file article.txt --sentences 3
 insighttext summarize --text "A long paragraph to condense." --sentences 1
 insighttext keywords --file article.txt --count 5
+insighttext sentiment --text "I absolutely loved this!"
 ```
 
 ### Library
 
 ```python
 from insighttext.keywords import extract_keywords
+from insighttext.sentiment import analyze_sentiment
 from insighttext.summarizer import summarize
 
 text = open("article.txt").read()
 print(summarize(text, num_sentences=3))
 print(extract_keywords(text, num_keywords=5))
+print(analyze_sentiment(text))
 ```
 
 ## Testing

@@ -13,7 +13,6 @@ authors = [{ name = "Abdulmalek Azouz" }]
 keywords = ["nlp", "text-analysis", "summarization", "sentiment-analysis", "machine-learning"]
 
 dependencies = [
-    "pydantic>=2.4,<3",
     "scikit-learn>=1.3,<2",
     "Flask>=3.0,<4",
 ]
@@ -46,5 +45,6 @@ convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 # A plain whitespace-separated word list reads more naturally here than a
-# giant list literal for a ~175-word stopword list.
+# giant list literal for these word lists.
 "src/insighttext/preprocessing.py" = ["SIM905"]
+"src/insighttext/sentiment.py" = ["SIM905"]

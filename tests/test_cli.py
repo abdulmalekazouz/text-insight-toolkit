@@ -50,3 +50,15 @@ def test_keywords_with_text_argument(capsys):
 def test_keywords_requires_input_source():
     with pytest.raises(SystemExit):
         main(["keywords"])
+
+
+def test_sentiment_with_text_argument(capsys):
+    exit_code = main(["sentiment", "--text", "I absolutely loved this!"])
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert "positive" in captured.out
+
+
+def test_sentiment_requires_input_source():
+    with pytest.raises(SystemExit):
+        main(["sentiment"])
