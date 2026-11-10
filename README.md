@@ -32,6 +32,8 @@ pip install -e ".[dev]"
 - **Sentiment analysis.** Lexicon-based polarity scoring with a windowed
   negation rule (e.g. "not good" counts as negative), fully transparent
   about which words drove the result.
+- **Web UI.** A single-page Flask form that runs all three analyses on
+  pasted-in text and shows the results together.
 
 ## Project layout
 
@@ -42,6 +44,8 @@ src/insighttext/
     keywords.py          TF-IDF keyword extraction
     sentiment.py          Lexicon-based sentiment analysis
     cli.py                 argparse-based CLI
+    webapp.py               Flask app (create_app() factory)
+    templates/, static/      Web UI
 tests/                  pytest suite
 ```
 
@@ -68,6 +72,17 @@ print(summarize(text, num_sentences=3))
 print(extract_keywords(text, num_keywords=5))
 print(analyze_sentiment(text))
 ```
+
+### Web app
+
+```bash
+flask --app insighttext.webapp run --debug
+```
+
+Then open http://127.0.0.1:5000/, paste in some text, and submit to see the
+summary, keywords, and sentiment analysis together.
+
+![Text Insight Toolkit web UI](docs/screenshot-webui.jpg)
 
 ## Testing
 

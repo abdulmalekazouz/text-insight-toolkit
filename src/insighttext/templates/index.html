@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Text Insight Toolkit</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Text Insight Toolkit</h1>
+    <p class="subtitle">Paste in some text to get a summary, keywords, and a sentiment reading.</p>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('analyze') }}">
+        <textarea name="text" rows="10" placeholder="Paste an article, review, or any block of text here&hellip;">{{ text }}</textarea>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if results %}
+    <div class="panel">
+        <h2>Summary</h2>
+        <p>{{ results.summary }}</p>
+
+        <h2>Keywords</h2>
+        {% if results.keywords %}
+            <div class="chips">
+                {% for keyword in results.keywords %}
+                    <span class="chip">{{ keyword }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="muted">No standout keywords found.</p>
+        {% endif %}
+
+        <h2>Sentiment</h2>
+        <p>
+            <span class="sentiment-badge sentiment-{{ results.sentiment.label }}">
+                {{ results.sentiment.label }}
+            </span>
+            <span class="muted">score: {{ "%.2f"|format(results.sentiment.score) }}</span>
+        </p>
+        {% if results.sentiment.positive_words %}
+            <p class="muted">positive words: {{ results.sentiment.positive_words|join(", ") }}</p>
+        {% endif %}
+        {% if results.sentiment.negative_words %}
+            <p class="muted">negative words: {{ results.sentiment.negative_words|join(", ") }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+</body>
+</html>
