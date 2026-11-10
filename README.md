@@ -27,6 +27,8 @@ pip install -e ".[dev]"
 - **Extractive summarization.** Scores each sentence by its TF-IDF weight
   relative to the rest of the document and returns the top-scoring
   sentences, in their original order.
+- **Keyword extraction.** Ranks terms by their peak TF-IDF weight across
+  the document's sentences and returns the top-N as keywords.
 
 ## Project layout
 
@@ -34,6 +36,7 @@ pip install -e ".[dev]"
 src/insighttext/
     preprocessing.py   Sentence/word tokenization and stopword filtering
     summarizer.py       TF-IDF extractive summarization
+    keywords.py          TF-IDF keyword extraction
     cli.py               argparse-based CLI
 tests/                  pytest suite
 ```
@@ -45,15 +48,18 @@ tests/                  pytest suite
 ```bash
 insighttext summarize --file article.txt --sentences 3
 insighttext summarize --text "A long paragraph to condense." --sentences 1
+insighttext keywords --file article.txt --count 5
 ```
 
 ### Library
 
 ```python
+from insighttext.keywords import extract_keywords
 from insighttext.summarizer import summarize
 
-summary = summarize(open("article.txt").read(), num_sentences=3)
-print(summary)
+text = open("article.txt").read()
+print(summarize(text, num_sentences=3))
+print(extract_keywords(text, num_keywords=5))
 ```
 
 ## Testing
