@@ -4,6 +4,7 @@ Examples:
     insighttext summarize --file article.txt --sentences 3
     insighttext summarize --text "Some text to summarize." --sentences 1
     insighttext keywords --file article.txt --count 5
+    insighttext sentiment --text "I loved this!"
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from insighttext.keywords import extract_keywords
+from insighttext.sentiment import analyze_sentiment
 from insighttext.summarizer import summarize
 
 
@@ -68,6 +70,25 @@ def _cmd_keywords(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_sentiment(args: argparse.Namespace) -> int:
+    """Handles the `sentiment` subcommand.
+
+    Args:
+        args: Parsed CLI arguments for the `sentiment` subcommand.
+
+    Returns:
+        The process exit code (0 on success).
+    """
+    text = _read_input(args)
+    result = analyze_sentiment(text)
+    print(f"{result.label} (score={result.score:+.2f})")
+    if result.positive_words:
+        print(f"  positive words: {', '.join(result.positive_words)}")
+    if result.negative_words:
+        print(f"  negative words: {', '.join(result.negative_words)}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Builds the top-level argparse parser for the `insighttext` CLI.
 
@@ -98,6 +119,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--count", type=int, default=5, help="Number of keywords to extract"
     )
     keywords_parser.set_defaults(func=_cmd_keywords)
+
+    sentiment_parser = subparsers.add_parser(
+        "sentiment", help="Run lexicon-based sentiment analysis on a document"
+    )
+    sentiment_parser.add_argument("--file", help="Path to a text file to analyze")
+    sentiment_parser.add_argument("--text", help="Raw text to analyze")
+    sentiment_parser.set_defaults(func=_cmd_sentiment)
 
     return parser
 
