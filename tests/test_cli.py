@@ -38,3 +38,15 @@ def test_summarize_rejects_both_input_sources(tmp_path):
 
     with pytest.raises(SystemExit):
         main(["summarize", "--file", str(input_path), "--text", "also this"])
+
+
+def test_keywords_with_text_argument(capsys):
+    exit_code = main(["keywords", "--text", SAMPLE_TEXT, "--count", "3"])
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert captured.out.strip() != ""
+
+
+def test_keywords_requires_input_source():
+    with pytest.raises(SystemExit):
+        main(["keywords"])

@@ -3,6 +3,7 @@
 Examples:
     insighttext summarize --file article.txt --sentences 3
     insighttext summarize --text "Some text to summarize." --sentences 1
+    insighttext keywords --file article.txt --count 5
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from insighttext.keywords import extract_keywords
 from insighttext.summarizer import summarize
 
 
@@ -51,6 +53,21 @@ def _cmd_summarize(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_keywords(args: argparse.Namespace) -> int:
+    """Handles the `keywords` subcommand.
+
+    Args:
+        args: Parsed CLI arguments for the `keywords` subcommand.
+
+    Returns:
+        The process exit code (0 on success).
+    """
+    text = _read_input(args)
+    keywords = extract_keywords(text, num_keywords=args.count)
+    print(", ".join(keywords))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Builds the top-level argparse parser for the `insighttext` CLI.
 
@@ -71,6 +88,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--sentences", type=int, default=3, help="Number of sentences in the summary"
     )
     summarize_parser.set_defaults(func=_cmd_summarize)
+
+    keywords_parser = subparsers.add_parser(
+        "keywords", help="Extract the top TF-IDF keywords from a document"
+    )
+    keywords_parser.add_argument("--file", help="Path to a text file to analyze")
+    keywords_parser.add_argument("--text", help="Raw text to analyze")
+    keywords_parser.add_argument(
+        "--count", type=int, default=5, help="Number of keywords to extract"
+    )
+    keywords_parser.set_defaults(func=_cmd_keywords)
 
     return parser
 
