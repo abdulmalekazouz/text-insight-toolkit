@@ -22,12 +22,38 @@ source .venv/bin/activate   # .venv\Scripts\activate on Windows
 pip install -e ".[dev]"
 ```
 
+## Features
+
+- **Extractive summarization.** Scores each sentence by its TF-IDF weight
+  relative to the rest of the document and returns the top-scoring
+  sentences, in their original order.
+
 ## Project layout
 
 ```
 src/insighttext/
     preprocessing.py   Sentence/word tokenization and stopword filtering
+    summarizer.py       TF-IDF extractive summarization
+    cli.py               argparse-based CLI
 tests/                  pytest suite
+```
+
+## Usage
+
+### CLI
+
+```bash
+insighttext summarize --file article.txt --sentences 3
+insighttext summarize --text "A long paragraph to condense." --sentences 1
+```
+
+### Library
+
+```python
+from insighttext.summarizer import summarize
+
+summary = summarize(open("article.txt").read(), num_sentences=3)
+print(summary)
 ```
 
 ## Testing
